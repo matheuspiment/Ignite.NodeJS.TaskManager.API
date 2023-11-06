@@ -8,6 +8,7 @@ const DATABASE_FILE_URL = new URL("../data.json", import.meta.url);
  * The data is stored in memory as an object, where the keys are table names and the values are arrays of records.
  * The data is loaded from the file into memory when a new instance of the class is created.
  * The select method can be used to select all records from a specified table.
+ * The insert method can be used to insert a record into a specified table.
  */
 class Database {
   /**
@@ -64,8 +65,42 @@ class Database {
    * @param {string} table - The name of the table to select from.
    * @returns {Array} An array of records from the specified table, or an empty array if the table does not exist.
    */
-  select(table) {
-    return this.#data[table] ?? [];
+  select(table, search = {}) {
+    if (!this.#data[table]) {
+      return [];
+    }
+
+    const records = this.#data[table];
+
+    return records.filter((record) => {
+      for (const [key, value] of Object.entries(search)) {
+        if (record[key].includes(value)) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  }
+
+  /**
+   * Inserts a record into a specified table.
+   * If the table does not exist, it creates the table.
+   * After inserting the record, it persists the data to the database file.
+   *
+   * @param {string} table - The name of the table to insert into.
+   * @param {Object} record - The record to insert.
+   * @returns {Promise<void>} A promise that resolves when the record has been successfully inserted and the data has been persisted.
+   * @throws {Error} If there's an error persisting the data.
+   */
+  async insert(table, record) {
+    if (!this.#data[table]) {
+      this.#data[table] = [];
+    }
+
+    this.#data[table].push(record);
+
+    await this.#persist();
   }
 }
 
