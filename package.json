@@ -1,0 +1,25 @@
+{
+  "name": "ignite.nodejs.taskmanager.api",
+  "version": "0.1.0",
+  "description": "Node web REST API to manage tasks.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/matheuspiment/Ignite.NodeJS.TaskManager.API.git"
+  },
+  "keywords": [
+    "Node",
+    "REST",
+    "Task",
+    "Manager"
+  ],
+  "author": "Matheus Pimenta",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/matheuspiment/Ignite.NodeJS.TaskManager.API/issues"
+  },
+  "homepage": "https://github.com/matheuspiment/Ignite.NodeJS.TaskManager.API#readme"
+}
