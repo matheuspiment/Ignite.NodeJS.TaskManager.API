@@ -1,6 +1,8 @@
 import http from "node:http";
 import packageJson from "../package.json" assert { type: "json" };
 
+import Database from "./database.js";
+
 const routes = {
   "/": {
     GET: (_req, res) => {
@@ -9,6 +11,17 @@ const routes = {
           "Content-Type": "text/plain",
         })
         .end(`Task Manager API v${packageJson.version}`);
+    },
+  },
+  "/tasks": {
+    GET: (_req, res) => {
+      const tasks = Database.select("tasks");
+
+      res
+        .writeHead(200, {
+          "Content-Type": "application/json",
+        })
+        .end(JSON.stringify(tasks));
     },
   },
 };
