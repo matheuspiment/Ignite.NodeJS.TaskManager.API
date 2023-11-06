@@ -15,8 +15,13 @@ const routes = {
     },
   },
   "/tasks": {
-    GET: (_req, res) => {
-      const tasks = Database.select("tasks");
+    GET: (req, res) => {
+      const { search } = req.query;
+
+      const tasks = Database.select("tasks", search && {
+        title: search,
+        description: search,
+      });
 
       return res
         .writeHead(200, {
@@ -93,8 +98,13 @@ const server = http
   .createServer((req, res) => {
     const { url, method } = req;
 
-    if (routes[url] && routes[url][method]) {
-      return routes[url][method](req, res);
+    const [path, querystring] = url.split("?");
+
+    const searchParams = new URLSearchParams(querystring);
+    req.query = Object.fromEntries(searchParams);
+
+    if (routes[path] && routes[path][method]) {
+      return routes[path][method](req, res);
     }
 
     return res

@@ -59,12 +59,15 @@ class Database {
     }
   }
 
-  /**
-   * Selects all records from a specified table.
-   *
-   * @param {string} table - The name of the table to select from.
-   * @returns {Array} An array of records from the specified table, or an empty array if the table does not exist.
-   */
+/**
+ * Selects records from a specified table that match a search criteria.
+ * If the table does not exist, it returns an empty array.
+ * If no search criteria is provided, it returns all records from the table.
+ * 
+ * @param {string} table - The name of the table to select from.
+ * @param {Object} [search={}] - An object where the keys are field names and the values are the values to search for.
+ * @returns {Array} An array of records that match the search criteria, or an empty array if the table does not exist.
+ */
   select(table, search = {}) {
     if (!this.#data[table]) {
       return [];
@@ -72,14 +75,18 @@ class Database {
 
     const records = this.#data[table];
 
+    if (Object.keys(search).length === 0) {
+      return records;
+    }
+
     return records.filter((record) => {
       for (const [key, value] of Object.entries(search)) {
         if (record[key].includes(value)) {
-          return false;
+          return true;
         }
       }
 
-      return true;
+      return false;
     });
   }
 
