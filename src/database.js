@@ -59,15 +59,15 @@ class Database {
     }
   }
 
-/**
- * Selects records from a specified table that match a search criteria.
- * If the table does not exist, it returns an empty array.
- * If no search criteria is provided, it returns all records from the table.
- * 
- * @param {string} table - The name of the table to select from.
- * @param {Object} [search={}] - An object where the keys are field names and the values are the values to search for.
- * @returns {Array} An array of records that match the search criteria, or an empty array if the table does not exist.
- */
+  /**
+   * Selects records from a specified table that match a search criteria.
+   * If the table does not exist, it returns an empty array.
+   * If no search criteria is provided, it returns all records from the table.
+   *
+   * @param {string} table - The name of the table to select from.
+   * @param {Object} [search={}] - An object where the keys are field names and the values are the values to search for.
+   * @returns {Array} An array of records that match the search criteria, or an empty array if the table does not exist.
+   */
   select(table, search = {}) {
     if (!this.#data[table]) {
       return [];
@@ -106,6 +106,36 @@ class Database {
     }
 
     this.#data[table].push(record);
+
+    await this.#persist();
+  }
+
+  /**
+   * Updates a record in a specified table.
+   * If the table or the record does not exist, it throws an error.
+   * After updating the record, it persists the data to the database file.
+   * 
+   * @param {string} table - The name of the table to update the record in.
+   * @param {string|number} id - The id of the record to update.
+   * @param {Object} record - An object containing the new values for the record.
+   * @returns {Promise<void>} A promise that resolves when the record has been successfully updated and the data has been persisted.
+   * @throws {Error} If the table or the record does not exist.
+   */
+  async update(table, id, record) {
+    if (!this.#data[table]) {
+      throw new Error("Record not found");
+    }
+
+    const index = this.#data[table].findIndex((record) => record.id === id);
+
+    if (index === -1) {
+      throw new Error("Record not found");
+    }
+
+    this.#data[table][index] = {
+      ...this.#data[table][index],
+      ...record,
+    };
 
     await this.#persist();
   }

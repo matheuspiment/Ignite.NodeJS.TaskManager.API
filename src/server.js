@@ -18,10 +18,13 @@ const routes = {
     GET: (req, res) => {
       const { search } = req.query;
 
-      const tasks = Database.select("tasks", search && {
-        title: search,
-        description: search,
-      });
+      const tasks = Database.select(
+        "tasks",
+        search && {
+          title: search,
+          description: search,
+        }
+      );
 
       return res
         .writeHead(200, {
@@ -92,6 +95,60 @@ const routes = {
       });
     },
   },
+  "/tasks/:id": {
+    PUT: (req, res) => {
+      let body = "";
+
+      req.on("data", (chunk) => {
+        body += chunk.toString();
+      });
+
+      req.on("end", async () => {
+        const { title, description } = JSON.parse(body);
+
+        if (title && typeof title !== "string") {
+          return res
+            .writeHead(400, {
+              "Content-Type": "application/json",
+            })
+            .end(JSON.stringify({ error: "Title must be a string" }));
+        }
+
+        if (description && typeof description !== "string") {
+          return res
+            .writeHead(400, {
+              "Content-Type": "application/json",
+            })
+            .end(JSON.stringify({ error: "Description must be a string" }));
+        }
+
+        const { id } = req.params;
+
+        const [task] = Database.select("tasks", { id });
+
+        if (!task) {
+          return res
+            .writeHead(404, {
+              "Content-Type": "application/json",
+            })
+            .end(JSON.stringify({ error: `Task with id ${id} not found` }));
+        }
+
+        const updatedTask = {
+          ...task,
+          title: title || task.title,
+          description: description || task.description,
+          updated_at: new Date().toISOString(),
+        };
+
+        await Database.update("tasks", id, updatedTask);
+
+        return res
+          .writeHead(204)
+          .end();
+      });
+    },
+  },
 };
 
 const server = http
@@ -100,11 +157,34 @@ const server = http
 
     const [path, querystring] = url.split("?");
 
-    const searchParams = new URLSearchParams(querystring);
-    req.query = Object.fromEntries(searchParams);
+    const route = Object.entries(routes).find(([route]) => {
+      const regex = new RegExp(`^${route.replaceAll(/:(\w+)/g, "(?<$1>.+)")}$`);
 
-    if (routes[path] && routes[path][method]) {
-      return routes[path][method](req, res);
+      return regex.test(path);
+    });
+
+    if (route) {
+      const [routePath, routeHandlers] = route;
+
+      if (routeHandlers[method]) {
+        const regex = new RegExp(
+          `^${routePath.replaceAll(/:(\w+)/g, "(?<$1>.+)")}$`
+        );
+
+        const routeParams = regex.exec(path);
+        req.params = routeParams.groups;
+
+        const searchParams = new URLSearchParams(querystring);
+        req.query = Object.fromEntries(searchParams);
+
+        return routeHandlers[method](req, res);
+      }
+
+      return res
+        .writeHead(405, {
+          "Content-Type": "application/json",
+        })
+        .end(JSON.stringify({ error: "Method Not Allowed" }));
     }
 
     return res
