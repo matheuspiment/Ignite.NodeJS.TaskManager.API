@@ -23,5 +23,8 @@
   "bugs": {
     "url": "https://github.com/matheuspiment/Ignite.NodeJS.TaskManager.API/issues"
   },
-  "homepage": "https://github.com/matheuspiment/Ignite.NodeJS.TaskManager.API#readme"
+  "homepage": "https://github.com/matheuspiment/Ignite.NodeJS.TaskManager.API#readme",
+  "dependencies": {
+    "csv-parse": "^5.5.2"
+  }
 }

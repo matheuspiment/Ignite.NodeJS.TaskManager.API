@@ -1,8 +1,11 @@
 import http from "node:http";
 import { randomUUID } from "node:crypto";
+import { parse } from "csv-parse/sync";
+
 import packageJson from "../package.json" assert { type: "json" };
 
 import Database from "./database.js";
+import { extractFiles } from "./utils/extractFiles.js";
 
 const routes = {
   "/": {
@@ -92,6 +95,66 @@ const routes = {
             "Content-Type": "application/json",
           })
           .end(JSON.stringify(task));
+      });
+    },
+  },
+  "/tasks/upload": {
+    POST: (req, res) => {
+      const contentTypeHeader = req.headers["content-type"];
+      const [contentType, boundaryHeader] = contentTypeHeader.split("; ");
+      const boundary = `--${boundaryHeader.split("=")[1]}`;
+
+      if (contentType !== "multipart/form-data") {
+        res
+          .writeHead(404, {
+            "Content-Type": "application/json",
+          })
+          .end(JSON.stringify({ error: "Expecting multipart/form-data" }));
+      }
+
+      if (!boundary) {
+        res
+          .writeHead(404, {
+            "Content-Type": "application/json",
+          })
+          .end(JSON.stringify({ error: "Missing boundary" }));
+      }
+
+      let body = "";
+
+      req.on("data", (chunk) => {
+        body += chunk.toString();
+      });
+
+      req.on("end", async () => {
+        const files = extractFiles(body, boundary);
+
+        for await (const file of Object.entries(files)) {
+          const [, fileContent] = file;
+          const { content } = fileContent[0];
+
+          const tasks = parse(content, {
+            columns: true,
+            skip_empty_lines: true,
+          });
+
+          for await (const task of tasks) {
+            const today = new Date().toISOString();
+
+            const newTask = {
+              id: randomUUID(),
+              title: task.title,
+              description: task.description,
+              completed_at: null,
+              created_at: today,
+              updated_at: today,
+            };
+
+            await Database.insert("tasks", newTask);
+          }
+        }
+
+        return res.writeHead(204).end();
       });
     },
   },
