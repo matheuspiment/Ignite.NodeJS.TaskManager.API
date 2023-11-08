@@ -65,13 +65,8 @@ export const getRouteParams = (routePath, path) => {
  *
  * @param {string} querystring - The query string.
  * @returns {Object} The parsed query parameters.
- * @throws {Error} Throws an error if the querystring is not a string.
  */
 export const getQueryParams = (querystring) => {
-  if (typeof querystring !== 'string') {
-    throw new Error('Invalid querystring. Expected a string.');
-  }
-
   const searchParams = new URLSearchParams(querystring);
   return Object.fromEntries(searchParams);
 };

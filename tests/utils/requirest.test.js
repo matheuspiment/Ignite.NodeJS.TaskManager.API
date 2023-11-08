@@ -133,9 +133,8 @@ describe("getQueryParams", () => {
     expect(result).toEqual({});
   });
 
-  it("should throw an error when querystring is not a string", () => {
-    expect(() => getQueryParams(null)).toThrow(
-      "Invalid querystring. Expected a string."
-    );
+  it("should return an empty object when querystring is not a string", () => {
+    const result = getQueryParams(null);
+    expect(result).toEqual({});
   });
 });
