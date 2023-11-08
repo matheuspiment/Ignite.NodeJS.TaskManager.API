@@ -143,10 +143,25 @@ const routes = {
 
         await Database.update("tasks", id, updatedTask);
 
-        return res
-          .writeHead(204)
-          .end();
+        return res.writeHead(204).end();
       });
+    },
+    DELETE: async (req, res) => {
+      const { id } = req.params;
+
+      const [task] = Database.select("tasks", { id });
+
+      if (!task) {
+        return res
+          .writeHead(404, {
+            "Content-Type": "application/json",
+          })
+          .end(JSON.stringify({ error: `Task with id ${id} not found` }));
+      }
+
+      await Database.delete("tasks", id);
+
+      return res.writeHead(204).end();
     },
   },
 };

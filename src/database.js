@@ -114,7 +114,7 @@ class Database {
    * Updates a record in a specified table.
    * If the table or the record does not exist, it throws an error.
    * After updating the record, it persists the data to the database file.
-   * 
+   *
    * @param {string} table - The name of the table to update the record in.
    * @param {string|number} id - The id of the record to update.
    * @param {Object} record - An object containing the new values for the record.
@@ -136,6 +136,32 @@ class Database {
       ...this.#data[table][index],
       ...record,
     };
+
+    await this.#persist();
+  }
+
+  /**
+   * Deletes a record from a specified table.
+   * If the table or the record does not exist, it throws an error.
+   * After deleting the record, it persists the data to the database file.
+   * 
+   * @param {string} table - The name of the table to delete the record from.
+   * @param {string|number} id - The id of the record to delete.
+   * @returns {Promise<void>} A promise that resolves when the record has been successfully deleted and the data has been persisted.
+   * @throws {Error} If the table or the record does not exist.
+   */
+  async delete(table, id) {
+    if (!this.#data[table]) {
+      throw new Error("Record not found");
+    }
+
+    const index = this.#data[table].findIndex((record) => record.id === id);
+
+    if (index === -1) {
+      throw new Error("Record not found");
+    }
+
+    this.#data[table].splice(index, 1);
 
     await this.#persist();
   }
