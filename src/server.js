@@ -164,6 +164,36 @@ const routes = {
       return res.writeHead(204).end();
     },
   },
+  "/tasks/:id/complete": {
+    PATCH: async (req, res) => {
+      const { id } = req.params;
+
+      const [task] = Database.select("tasks", { id });
+
+      if (!task) {
+        return res
+          .writeHead(404, {
+            "Content-Type": "application/json",
+          })
+          .end(JSON.stringify({ error: `Task with id ${id} not found` }));
+      }
+
+      const today = new Date().toISOString();
+
+      const isTaskCompleted = !!task.completed_at;
+      const completed_at = isTaskCompleted ? null : today;
+
+      const updatedTask = {
+        ...task,
+        completed_at,
+        updated_at: today,
+      };
+
+      await Database.update("tasks", id, updatedTask);
+
+      return res.writeHead(204).end();
+    },
+  },
 };
 
 const server = http
@@ -173,7 +203,9 @@ const server = http
     const [path, querystring] = url.split("?");
 
     const route = Object.entries(routes).find(([route]) => {
-      const regex = new RegExp(`^${route.replaceAll(/:(\w+)/g, "(?<$1>.+)")}$`);
+      const regex = new RegExp(
+        `^${route.replaceAll(/:(\w+)/g, "(?<$1>[\\w|\\-]+)")}$`
+      );
 
       return regex.test(path);
     });
@@ -183,7 +215,7 @@ const server = http
 
       if (routeHandlers[method]) {
         const regex = new RegExp(
-          `^${routePath.replaceAll(/:(\w+)/g, "(?<$1>.+)")}$`
+          `^${routePath.replaceAll(/:(\w+)/g, "(?<$1>[\\w|\\-]+)")}$`
         );
 
         const routeParams = regex.exec(path);
