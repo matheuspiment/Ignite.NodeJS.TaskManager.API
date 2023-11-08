@@ -1,0 +1,248 @@
+_type: export
+__export_format: 4
+__export_date: 2023-11-08T13:52:18.056Z
+__export_source: insomnia.desktop.app:v8.3.0
+resources:
+  - _id: req_90db2a9ec1eb43caafd162f57dbfcf95
+    parentId: wrk_b406165f037a4b51b14971cba0e5bb1e
+    modified: 1699280141030
+    created: 1699275126279
+    url: "{{ _.baseURL }}/"
+    name: Root
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers:
+      - name: User-Agent
+        value: insomnia/8.2.0
+    authentication: {}
+    metaSortKey: -1699275126279
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: wrk_b406165f037a4b51b14971cba0e5bb1e
+    parentId: null
+    modified: 1699275077719
+    created: 1699275077719
+    name: Task Manager
+    description: ""
+    scope: collection
+    _type: workspace
+  - _id: req_745775196a2e4b4d93856833953c39b8
+    parentId: wrk_b406165f037a4b51b14971cba0e5bb1e
+    modified: 1699451201455
+    created: 1699284830284
+    url: "{{ _.baseURL }}/{{ _.tasks }}?search="
+    name: List tasks
+    description: ""
+    method: GET
+    body: {}
+    parameters: []
+    headers:
+      - name: User-Agent
+        value: insomnia/8.2.0
+    authentication: {}
+    metaSortKey: -1699275126229
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_6cc5b662dbae43da8c0a98c1a836aa25
+    parentId: wrk_b406165f037a4b51b14971cba0e5bb1e
+    modified: 1699451206439
+    created: 1699286493433
+    url: "{{ _.baseURL }}/{{ _.tasks }}"
+    name: Create task
+    description: ""
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"title": "Remove task endpoint",
+        	"description": "Implement the create task endpoint"
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/8.2.0
+    authentication: {}
+    metaSortKey: -1699275126179
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_7995a751373949f8b49e2806e8a093a3
+    parentId: wrk_b406165f037a4b51b14971cba0e5bb1e
+    modified: 1699451390220
+    created: 1699441785354
+    url: "{{ _.baseURL }}/{{ _.tasks }}/upload"
+    name: Upload tasks
+    description: ""
+    method: POST
+    body:
+      mimeType: multipart/form-data
+      params:
+        - name: my-tasks
+          value: ""
+          id: pair_66d758e8469c4139b8284a230e96072c
+          type: file
+          fileName: /Users/n18648/Projects/Ignite.NodeJS.TaskManager.API/tasks.csv
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: multipart/form-data
+      - name: User-Agent
+        value: insomnia/8.2.0
+    authentication: {}
+    metaSortKey: -1699275126154
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_5334540b76d54427a6f15f4d6984155f
+    parentId: wrk_b406165f037a4b51b14971cba0e5bb1e
+    modified: 1699451503295
+    created: 1699373278718
+    url: "{{ _.baseURL }}/{{ _.tasks }}/{% response 'body',
+      'req_6cc5b662dbae43da8c0a98c1a836aa25', 'b64::JC5pZA==::46b',
+      'no-history', 60 %}"
+    name: Update task
+    description: ""
+    method: PUT
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"title": "Review the docs",
+        	"description": "Review docs for task manager"
+        }
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/8.2.0
+    authentication: {}
+    metaSortKey: -1699275126129
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_cd66e44fa79b4bfd9deaaac3751d96ed
+    parentId: wrk_b406165f037a4b51b14971cba0e5bb1e
+    modified: 1699451223853
+    created: 1699434195638
+    url: "{{ _.baseURL }}/{{ _.tasks }}/{% response 'body',
+      'req_745775196a2e4b4d93856833953c39b8', 'b64::JC5bMF0uaWQ=::46b',
+      'no-history', 60 %}/complete"
+    name: Complete task
+    description: ""
+    method: PATCH
+    body:
+      mimeType: application/json
+      text: ""
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/8.2.0
+    authentication: {}
+    metaSortKey: -1699275126104
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: req_2071c430ed5c4bbf8d575d993b20c09c
+    parentId: wrk_b406165f037a4b51b14971cba0e5bb1e
+    modified: 1699451414598
+    created: 1699433787032
+    url: "{{ _.baseURL }}/{{ _.tasks }}/{% response 'body',
+      'req_745775196a2e4b4d93856833953c39b8', 'b64::JC5bMF0uaWQ=::46b',
+      'no-history', 60 %}"
+    name: Delete task
+    description: ""
+    method: DELETE
+    body:
+      mimeType: application/json
+      text: ""
+    parameters: []
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/8.2.0
+    authentication: {}
+    metaSortKey: -1699275126079
+    isPrivate: false
+    settingStoreCookies: true
+    settingSendCookies: true
+    settingDisableRenderRequestBody: false
+    settingEncodeUrl: true
+    settingRebuildPath: true
+    settingFollowRedirects: global
+    _type: request
+  - _id: env_fbc2f62b8fea6bacef54f01e610f01f1ccb670ff
+    parentId: wrk_b406165f037a4b51b14971cba0e5bb1e
+    modified: 1699451186738
+    created: 1699275077721
+    name: Base Environment
+    data:
+      tasks: tasks
+    dataPropertyOrder:
+      "&":
+        - tasks
+    color: null
+    isPrivate: false
+    metaSortKey: 1699275077721
+    _type: environment
+  - _id: jar_fbc2f62b8fea6bacef54f01e610f01f1ccb670ff
+    parentId: wrk_b406165f037a4b51b14971cba0e5bb1e
+    modified: 1699275077722
+    created: 1699275077722
+    name: Default Jar
+    cookies: []
+    _type: cookie_jar
+  - _id: env_5c3190fa48d541208d78d769f5a0715a
+    parentId: env_fbc2f62b8fea6bacef54f01e610f01f1ccb670ff
+    modified: 1699280106528
+    created: 1699279365319
+    name: Development
+    data:
+      baseURL: http://localhost:3000
+    dataPropertyOrder:
+      "&":
+        - baseURL
+    color: null
+    isPrivate: false
+    metaSortKey: 1699279365319
+    _type: environment
