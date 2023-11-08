@@ -6,6 +6,7 @@ import packageJson from "../package.json" assert { type: "json" };
 
 import Database from "./database.js";
 import { extractFiles } from "./utils/extractFiles.js";
+import { getQueryParams, getRoute, getRouteParams } from "./utils/request.js";
 
 const routes = {
   "/": {
@@ -261,33 +262,18 @@ const routes = {
 
 const server = http
   .createServer((req, res) => {
-    const { url, method } = req;
-
-    const [path, querystring] = url.split("?");
-
-    const route = Object.entries(routes).find(([route]) => {
-      const regex = new RegExp(
-        `^${route.replaceAll(/:(\w+)/g, "(?<$1>[\\w|\\-]+)")}$`
-      );
-
-      return regex.test(path);
-    });
+    const [path, querystring] = req.url.split("?");
+    const route = getRoute(routes, path);
 
     if (route) {
       const [routePath, routeHandlers] = route;
+      const routeHandler = routeHandlers[req.method];
 
-      if (routeHandlers[method]) {
-        const regex = new RegExp(
-          `^${routePath.replaceAll(/:(\w+)/g, "(?<$1>[\\w|\\-]+)")}$`
-        );
+      if (routeHandler) {
+        req.params = getRouteParams(routePath, path);
+        req.query = getQueryParams(querystring);
 
-        const routeParams = regex.exec(path);
-        req.params = routeParams.groups;
-
-        const searchParams = new URLSearchParams(querystring);
-        req.query = Object.fromEntries(searchParams);
-
-        return routeHandlers[method](req, res);
+        return routeHandler(req, res);
       }
 
       return res
