@@ -2,6 +2,8 @@
 
 This is a **simple** Task Manager API built with Node.js. It provides endpoints for managing tasks.
 
+![Insomnia Collection](docs/insomnia.png)
+
 ## Running the Project
 
 To run the project, you need to have Node.js installed. Then, you can run the following commands:
